@@ -1,14 +1,39 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "omok.h"
 
-void get_cor(int *x, int *y)
+int h = 10;
+int w = 10;
+char flag = 'K';
+
+int is_right_cord(int x)
 {
-	printf("x y: "); scanf("%d %d", x, y);
-	
+	if (x < h && x > 0)
+		return 1;
+	return 0; 
+}
+
+void get_cor(char **board, int *x, int *y)
+{
+	int flag = 1;
+	do {
+		if (flag == 'K') printf("Player1's turn: ");
+		else printf("Player2's turn: ");
+		printf("x y: "); scanf("%d %d", x, y);
+		if (!is_right_cord(*x) || !is_right_cord(*y))
+		{
+			printf("out of coordination. do again\n");
+			continue;
+		}
+		if (board[*y][*x] == '*')
+			flag = 0;
+		else{
+			printf("Already exising coordination. do again\n");
+			continue;
+		}
+	}while(flag);
 	return ;
 }
 
-void put_star(char **board, int h, int w)
+void put_star(char **board)
 {
 	for (int i = 0; i < h; i++)
 	{
@@ -29,13 +54,20 @@ void put_star(char **board, int h, int w)
 	return ;
 }
 
-void print_star(char **board, int h, int w)
+void print_star(char **board)
 {
 	for (int i = 0; i < h; i++)
 	{
 		for (int j = 0; j < w; j++)
 		{
-			printf("%c ", board[i][j]);
+			if (i == 0 && j == 0)
+				printf("  ");
+			else if (i == 0)
+				printf("%d ", j);
+			else if (j == 0)
+				printf("%d ", i);
+			else
+				printf("%c ", board[i][j]);
 		}
 		printf("\n");
 	}
@@ -45,9 +77,6 @@ void print_star(char **board, int h, int w)
 int main()
 {
 	int x, y;
-	char flag = 'K';
-	int h = 10;
-	int w = 10;
 	char **board = (char **)calloc(h, sizeof(char *));
 	if (!board)
 		return 1;
@@ -57,10 +86,10 @@ int main()
 			exit(0);
 		}
 	}
-	put_star(board, h, w);
+	put_star(board);
 	while (1){
-		print_star(board, h, w);
-		get_cor(&x, &y);
+		print_star(board);
+		get_cor(board, &x, &y);
 		if (flag == 'K')
 		{
 			flag = 'O';
